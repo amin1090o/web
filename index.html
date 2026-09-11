@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BzShoP ∣ فروشگاه گیمینگ</title>
+    <style>
+        /* استایل پنجره که در ابتدا مخفی است */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0; top: 0; 
+    width: 100%; height: 100%; 
+    background-color: rgba(0,0,0,0.85); /* پس‌زمینه تیره */
+}
+
+/* کارت داخلی پنجره */
+.modal-content {
+    background: #1a1a1a;
+    margin: 15% auto;
+    padding: 20px;
+    border: 2px solid #0ff; /* خط دور نئونی */
+    width: 300px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px #0ff; /* درخشش */
+    text-align: center;
+    color: white;
+}
+
+/* ربات گوشه صفحه */
+.robot-trigger {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+        :root { --primary: #ff0055; --bg: #121212; --card-bg: #1e1e1e; --text: white; }
+        body { background: var(--bg); color: var(--text); font-family: Tahoma, sans-serif; margin: 0; padding: 20px; }
+        
+        /* Header & Layout */
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); margin-bottom: 20px; padding: 10px; }
+        .logo { font-size: 24px; color: var(--primary); font-weight: bold; }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        
+        /* Buttons & Inputs */
+        button { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { opacity: 0.8; transform: scale(1.05); }
+        input { padding: 10px; border: 1px solid #444; background: #222; color: white; border-radius: 5px; width: 100%; box-sizing: border-box; margin-bottom: 10px; }
+        
+        /* Cart Icon */
+        .cart-btn { position: relative; background: #333; font-size: 20px; padding: 8px 14px; }
+        .cart-count { position: absolute; top: -8px; left: -8px; background: var(--primary); color: white; font-size: 12px; border-radius: 50%; padding: 2px 7px; display: none; }
+        
+        /* Product Grid */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 10px; border: 1px solid #333; text-align: center; transition: 0.3s; }
+        .card:hover { border-color: var(--primary); }
+        .card h3 { margin: 10px 0 5px; }
+        .card p { color: #bbb; margin: 5px 0 15px; font-weight: bold; }
+        
+        /* Modals */
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #222; padding: 25px; border: 2px solid var(--primary); border-radius: 15px; z-index: 1000; width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto; }
+        #overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 999; }
+        
+        /* Cart Items */
+        .cart-item { display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; }
+        .cart-total { border-top: 1px solid #444; padding-top: 10px; margin-top: 10px; text-align: left; font-weight: bold; color: var(--primary); font-size: 18px; }
+        .btn-remove { background: #ff3300; padding: 5px 10px; font-size: 12px; }
+        .btn-empty { background: #555; margin-top: 5px; }
+        
+        /* Admin & User Area */
+        .admin-btn { position: fixed; bottom: 20px; right: 20px; background: #333; font-size: 12px; padding: 8px 12px; }
+        .admin-section { display: flex; flex-direction: column; gap: 10px; }
+        .user-name { font-size: 14px; color: #aaa; }
+        .contact-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* فاصله بین دکمه‌ها */
+    margin-top: 20px;
+}
+
+.contact-btn {
+    padding: 12px 25px;
+    background-color: #222; /* رنگ زمینه تیره */
+    color: #0ff; /* رنگ متن نئونی */
+    border: 1px solid #0ff; /* کادر نئونی */
+    text-decoration: none; /* حذف خط زیر لینک */
+    border-radius: 8px; 
+    transition: all 0.3s ease; 
+    font-weight: bold;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+
+.contact-btn:hover {
+    background-color: #0ff;
+    color: #000;
+    box-shadow: 0 0 15px #0ff;
+    transform: scale(1.05); 
+}
+.modal-content {
+    background: #1a1a1a;
+    margin: 15% auto;
+    padding: 20px;
+    width: 300px;
+    border-radius: 15px;
+    text-align: center;
+    color: white;
+    position: relative;
+    
+    
+    border: 3px solid transparent; 
+    background-clip: padding-box, border-box;
+    background-origin: border-box;
+    
+    background-image: linear-gradient(#1a1a1a, #1a1a1a), 
+                      linear-gradient(45deg, #ff0000, #ff00ff, #00ffff, #00ff00, #ff0000);
+    
+    
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+    
+    animation: borderRotate 4s linear infinite;
+}
+
+@keyframes borderRotate {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">BzShoP</div>
+    <div class="header-left">
+        <span id="userArea"></span>
+        <button class="cart-btn" onclick="openCart()">
+            🛒
+            <span class="cart-count" id="cartCount"></span>
+        </button>
+    </div>
+</div>
+
+
+<button class="robot-trigger" onclick="toggleContactModal()">
+    <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#0ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+        <rect x="5" y="8" width="14" height="10" rx="2"/>
+        <path d="M8 12h.01M16 12h.01M10 16h4"/>
+    </svg>
+</button>
+
+<div id="contactModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="toggleContactModal()">&times;</span>
+        <h2>راه های ارتباطی:</h2>
+        <div class="contact-options">
+            <p>شماره:09929285771</p>
+            <a href="https://t.me/yourid" target="_blank" class="contact-btn">تلگرام</a>
+            <a href="https://instagram.com/yourid" target="_blank" class="contact-btn">اینستاگرام</a>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleContactModal() {
+    const modal = document.getElementById("contactModal");
+    
+    if (modal.style.display === "block") {
+        modal.style.display = "none";
+    } else {
+        modal.style.display = "block";
+    }
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById("contactModal");
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+
+
+<div id="productGrid" class="product-grid"></div>
+
+<button class="admin-btn" onclick="openAdmin()">مدیریت</button>
+
+<div id="overlay" onclick="closeAll()"></div>
+
+<div id="loginModal" class="modal">
+    <h3>ورود به حساب</h3>
+    <div class="admin-section">
+        <input type="text" id="usernameInput" placeholder="نام شما">
+        <button onclick="doLogin()">ورود</button>
+    </div>
+</div>
+
+<!-- مودال سبد خرید -->
+<div id="cartModal" class="modal">
+    <h3>🛒 سبد خرید شما</h3>
+    <div id="cartItems"></div>
+    <div class="cart-total" id="cartTotal"></div>
+    <div class="admin-section" style="margin-top:15px">
+        <button onclick="startCheckout()">ادامه جهت پرداخت و ارسال</button>
+        <button class="btn-empty" onclick="clearCart()">خالی کردن سبد</button>
+    </div>
+</div>
+
+<div id="checkoutModal" class="modal">
+    <h3>🚚 اطلاعات ارسال و پرداخت</h3>
+    <div class="admin-section">
+        <label>نام و نام خانوادگی:</label>
+        <input type="text" id="custName" placeholder="مثلا: علی علوی">
+        <label>شماره تماس:</label>
+        <input type="text" id="custPhone" placeholder="09123456789">
+        <label>آدرس دقیق ارسال:</label>
+        <input type="text" id="custAddress" placeholder="خیابان، کوچه، پلاک...">
+        <button onclick="finalizeOrder()">تایید نهایی و ثبت سفارش</button>
+        <button class="btn-empty" onclick="closeAll()">انصراف</button>
+    </div>
+</div>
+
+<!-- مودال ادمین -->
+<div id="adminModal" class="modal">
+    <div id="loginSection">
+        <h3>ورود مدیریت</h3>
+        <div class="admin-section">
+            <input type="password" id="adminPass" placeholder="رمز عبور">
+            <button onclick="verifyAdmin()">ورود</button>
+        </div>
+    </div>
+    <div id="controlSection" style="display:none">
+        <h3>پنل مدیریت</h3>
+        <div class="admin-section">
+            <input type="text" id="newName" placeholder="نام محصول">
+            <input type="number" id="newPrice" placeholder="قیمت (تومان)">
+            <button onclick="addProduct()">افزودن محصول</button>
+            <button class="btn-empty" onclick="logoutAdmin()">خروج</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const defaultProducts = [
+        { id: 1, name: "کیبورد مکانیکال", price: 1500000 },
+        { id: 2, name: "ماوس گیمینگ", price: 850000 },
+        { id: 3, name: "هدست حرفه‌ای", price: 2200000 }
+    ];
+
+    let products = JSON.parse(localStorage.getItem('bzshop_products')) || defaultProducts;
+    let isAdmin = false;
+
+    // --- نمایش محصولات ---
+    function renderProducts() {
+        let html = '';
+        products.forEach(p => {
+            html += `
+                <div class="card">
+                    <h3>${p.name}</h3>
+                    <p>${p.price.toLocaleString()} تومان</p>
+                    <button onclick="buyProduct('${p.name}', ${p.price})">افزودن به سبد</button>
+                    ${isAdmin ? `<button class="btn-remove" onclick="deleteProduct(${p.id})">حذف</button>` : ''}
+                </div>
+            `;
+        });
+        document.getElementById('productGrid').innerHTML = html;
+        localStorage.setItem('bzshop_products', JSON.stringify(products));
+    }
+
+    // --- سبد خرید ---
+    function getCart() { return JSON.parse(localStorage.getItem('cart') || '[]'); }
+
+    function buyProduct(name, price) {
+        let cart = getCart();
+        cart.push({ name: name, price: price });
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
+        alert('✅ ' + name + ' به سبد اضافه شد.');
+    }
+
+    function updateCartCount() {
+        const count = getCart().length;
+        const el = document.getElementById('cartCount');
+        if (count > 0) { el.style.display = 'block'; el.textContent = count; } 
+        else { el.style.display = 'none'; }
+    }
+
+    function openCart() {
+        const cart = getCart();
+        const box = document.getElementById('cartItems');
+        if (cart.length === 0) {
+            box.innerHTML = '<p style="color:#888">سبد خرید خالی است</p>';
+        } else {
+            box.innerHTML = cart.map((item, i) => `
+                <div class="cart-item">
+                    <span>${item.name}</span>
+                    <span>${item.price.toLocaleString()} تومان</span>
+                    <button class="btn-remove" onclick="removeFromCart(${i})">حذف</button>
+                </div>
+            `).join('');
+        }
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        document.getElementById('cartTotal').textContent = 'جمع کل: ' + total.toLocaleString() + ' تومان';
+        showModal('cartModal');
+    }
+
+    function removeFromCart(index) {
+        let cart = getCart();
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
+        openCart();
+    }
+
+    function clearCart() {
+        if (confirm('آیا از خالی کردن سبد مطمئن هستید؟')) {
+            localStorage.removeItem('cart');
+            updateCartCount();
+            closeAll();
+        }
+    }
+
+    // --- مرحله پرداخت و ارسال ---
+    function startCheckout() {
+        const cart = getCart();
+        if (cart.length === 0) { alert('سبد خرید شما خالی است!'); return; }
+        closeAll();
+        showModal('checkoutModal');
+    }
+
+    function finalizeOrder() {
+        const name = document.getElementById('custName').value;
+        const phone = document.getElementById('custPhone').value;
+        const address = document.getElementById('custAddress').value;
+
+        if (!name || !phone || !address) {
+            alert('لطفاً تمام فیلدها را پر کنید!');
+            return;
+        }
+
+        const cart = getCart();
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+
+        // در دنیای واقعی، اینجا اطلاعات به سمت سرور ارسال میشه.
+        // اینجا برای نمایش نتیجه، یک پیام کامل به کاربر میدهیم.
+        alert(`🎉 سفارش با موفقیت ثبت شد!\n\n👤 مشتری: ${name}\n📞 تماس: ${phone}\n📍 آدرس: ${address}\n💰 مبلغ پرداختی: ${total.toLocaleString()} تومان\n\nمنتظر رسید محصول باشید! \nبرای اطمینان بیشتر از صفحه عکس بگیرید`);
+    // این تابع رو به کدهات اضافه کن
+async function sendOrderToSheet(orderData) {
+    const WEB_APP_URL = "آدرس_وب‌اپ_گوگل_را_اینجا_پیست_کن";
+
+    try {
+        const response = await fetch(AKfycbwCSckMfAZIr2e6iGeUJnByR1uqf2yJzirMK32Ipa-yT29A9hPRiPoSXqwtxnzRNcyN9w, {
+            method: 'POST',
+            mode: 'no-cors', // این گزینه کمک می‌کنه ارورهای CORS کمتر پیش بیاد
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+        });
+
+        console.log("سفارش با موفقیت ارسال شد!");
+        alert("سفارش شما با موفقیت ثبت شد!");
+    } catch (error) {
+        console.error("خطا در ارسال سفارش:", error);
+        alert("متاسفانه در ارسال سفارش خطایی رخ داد. دوباره تلاش کنید.");
+    }
+}
+// نحوه استفاده: وقتی کاربر روی دکمه "ثبت سفارش" کلیک کرد:
+function handleCheckout() {
+    // فرض کنیم این اطلاعات رو از فرم یا سبد خرید گرفتی:
+    const orderData = {
+        customerName: document.getElementById('name-input').value, // آیدی اینپوت نامت
+        phone: document.getElementById('phone-input').value,       // آیدی اینپوت شماره
+        address: document.getElementById('address-input').value,   // آیدی اینپوت آدرس
+        orderDetails: "مثلاً: خرید ۲ عدد ماشین کنترلی",           // جزئیات سفارش
+        totalPrice: "500,000 تومان"                              // قیمت نهایی
+    };
+
+    sendOrderToSheet(orderData);
+}
+
+        localStorage.removeItem('cart');
+        updateCartCount();
+        closeAll();
+        // پاکسازی فرم
+        document.getElementById('custName').value = '';
+        document.getElementById('custPhone').value = '';
+        document.getElementById('custAddress').value = '';
+    }
+
+    // --- مدیریت ورود/خروج ---
+    function showLogin() { showModal('loginModal'); }
+    function doLogin() {
+        const user = document.getElementById('usernameInput').value;
+        if (user) { localStorage.setItem('currentUser', user); closeAll(); updateUserArea(); }
+    }
+    function doLogout() { localStorage.removeItem('currentUser'); updateUserArea(); }
+    function updateUserArea() {
+        const user = localStorage.getItem('currentUser');
+        const area = document.getElementById('userArea');
+        area.innerHTML = user ? `<span class="user-name">سلام ${user}</span> <button class="btn-remove" onclick="doLogout()">خروج</button>` : `<button onclick="showLogin()">ورود</button>`;
+    }
+
+    // --- مودال‌ها ---
+    function showModal(id) {
+        document.getElementById(id).style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+    }
+    function closeAll() {
+        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        document.getElementById('overlay').style.display = 'none';
+    }
+
+    // --- ادمین ---
+    function openAdmin() { showModal('adminModal'); }
+    function verifyAdmin() {
+        if (document.getElementById('adminPass').value === 'aminbzg') {
+            isAdmin = true;
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('controlSection').style.display = 'block';
+            renderProducts();
+        } else { alert('رمز اشتباه است'); }
+    }
+    function addProduct() {
+        const name = document.getElementById('newName').value;
+        const price = parseInt(document.getElementById('newPrice').value);
+        if (name && price) {
+            products.push({ id: Date.now(), name: name, price: price });
+            document.getElementById('newName').value = '';
+            document.getElementById('newPrice').value = '';
+            renderProducts();
+            alert('محصول اضافه شد');
+        }
+    }
+    function deleteProduct(id) {
+        if (confirm('حذف شود؟')) {
+            products = products.filter(p => p.id !== id);
+            renderProducts();
+        }
+    }
+    function logoutAdmin() {
+        isAdmin = false;
+        document.getElementById('loginSection').style.display = 'block';
+        document.getElementById('controlSection').style.display = 'none';
+        closeAll();
+        renderProducts();
+    }
+
+    // Init
+    updateUserArea();
+    updateCartCount();
+    renderProducts();
+</script>
+
+</body>
+</html>
